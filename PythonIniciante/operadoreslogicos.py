@@ -1,4 +1,5 @@
 #Operadores Lógicos
+print("Operadores Aritméticos")
 
 #Adição
 print('')
@@ -56,3 +57,25 @@ print(b==2)
 
 #conferindo se o valor de b é diferente de 2
 print(b!=2)
+
+
+#Operadores lógicos
+print('')
+print('----------------------------------------------')
+print("Operadores lógicos")
+
+#A e B
+a = True
+b = False
+print("O valor de A é:", a)
+print("O valor de B é:", b)
+
+print("Usando o conectivo AND, o valor de A e B é:", a and b)
+#A ou B
+print("Agora usando o conectivo OR, o valor de A ou B é:", a or b)
+
+# not A
+print("O operador not , ou !, retorna o valor inverso da variável em questão. Aplicando not A, temos:", not a)
+
+# not B
+print("O operador not , ou !, retorna o valor inverso da variável em questão. Aplicando not B, temos:", not b)
