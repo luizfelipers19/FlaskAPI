@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 hoteis = [
     {
@@ -41,7 +41,27 @@ class Hotel(Resource): #trabalhando com um hotel único
         return {"message":"Hotel not found!"}, 404 #status code de erro
 
     def post(self,hotel_id):
-        pass
+        # usando o módulo ReqParse para receber e salvar os valores passados no corpo da requisição POST
+        argumentos = reqparse.RequestParser()
+         #recebendo os valores pela chave, que serão usados para compor o novo objeto da classe Hotel
+        argumentos.add_argument('nome')  
+        argumentos.add_argument('estrelas')
+        argumentos.add_argument('diaria')
+        argumentos.add_argument('cidade')
+
+        dados = argumentos.parse_args() #cria uma lista com os argumentos passados
+        
+        #criação de um objeto que receberá os valores passados
+        novo_hotel = {
+            'hotel_id':hotel_id, #o ID do hotel será passado pela URL na requisição
+            'nome':dados['nome'], #salva o valor passado por parâmetro e contido na lista, com index de Nome, na variável Nome
+            'estrelas':dados['estrelas'], #salva o valor passado por parâmetro e contido na lista, com index de Estrelas, na variável Estrelas
+            'diaria': dados['diaria'],#salva o valor passado por parâmetro e contido na lista, com index de Diaria, na variável Diaria
+            'cidade': dados['cidade']#salva o valor passado por parâmetro e contido na lista, com index de Cidade, na variável Cidade
+        }
+
+        hoteis.append(novo_hotel)
+        return novo_hotel, 200
 
     def put(self,hotel_id):
         pass
