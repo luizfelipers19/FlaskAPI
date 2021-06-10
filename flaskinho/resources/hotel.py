@@ -27,6 +27,24 @@ hoteis = [
     },
 ]
 
-class Hoteis(Resource):
+class Hoteis(Resource): ##lista de hoteis
     def get(self):
         return {'hoteis': hoteis}
+
+
+
+class Hotel(Resource): #trabalhando com um hotel único
+    def get(self, hotel_id):
+        for hotel in hoteis:
+            if hotel['hotel_id'] == hotel_id:
+                return hotel
+        return {"message":"Hotel not found!"}, 404 #status code de erro
+
+    def post(self,hotel_id):
+        pass
+
+    def put(self,hotel_id):
+        pass
+
+    def delete(self, hotel_id):
+        pass
