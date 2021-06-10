@@ -63,13 +63,7 @@ class Hotel(Resource): #trabalhando com um hotel único
         dados = Hotel.argumentos.parse_args() #cria uma lista com os argumentos passados
         
         #criação de um objeto que receberá os valores passados
-        novo_hotel = {
-            'hotel_id':hotel_id, #o ID do hotel será passado pela URL na requisição
-            'nome':dados['nome'], #salva o valor passado por parâmetro e contido na lista, com index de Nome, na variável Nome
-            'estrelas':dados['estrelas'], #salva o valor passado por parâmetro e contido na lista, com index de Estrelas, na variável Estrelas
-            'diaria': dados['diaria'],#salva o valor passado por parâmetro e contido na lista, com index de Diaria, na variável Diaria
-            'cidade': dados['cidade']#salva o valor passado por parâmetro e contido na lista, com index de Cidade, na variável Cidade
-        }
+        novo_hotel = {'hotel_id': hotel_id, **dados}
 
         hoteis.append(novo_hotel)
         return novo_hotel, 200
@@ -87,4 +81,6 @@ class Hotel(Resource): #trabalhando com um hotel único
         return novo_hotel, 201 #created
 
     def delete(self, hotel_id):
-        pass
+        global hoteis #precisando declarar uma referência a nossa variável global hoteis
+        hoteis = [hotel for hotel in hoteis if hotel['hotel_id'] != hotel_id] #list compreension que filtra pelos valores que são diferentes do hotel_id passado, deixando na lista apenas os que não são o id passado, e deletando o id passado por argumento
+        return {'message':'Hotel Deleted!'} #mensagem de retorno
