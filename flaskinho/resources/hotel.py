@@ -87,6 +87,11 @@ class Hotel(Resource): #trabalhando com um hotel único
         return hotel.json(), 201 #created
 
     def delete(self, hotel_id):
-        global hoteis #precisando declarar uma referência a nossa variável global hoteis
-        hoteis = [hotel for hotel in hoteis if hotel['hotel_id'] != hotel_id] #list compreension que filtra pelos valores que são diferentes do hotel_id passado, deixando na lista apenas os que não são o id passado, e deletando o id passado por argumento
-        return {'message':'Hotel Deleted!'} #mensagem de retorno
+        
+        #hoteis = [hotel for hotel in hoteis if hotel['hotel_id'] != hotel_id] #list compreension que filtra pelos valores que são diferentes do hotel_id passado, deixando na lista apenas os que não são o id passado, e deletando o id passado por argumento
+        
+        hotel = HotelModel.find_hotel(hotel_id)
+        if hotel:
+            hotel.delete_hotel()
+            return {'message':'Hotel Deleted!'} #mensagem de retorno
+        return {'message':'Hotel not found!'}, 404

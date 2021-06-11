@@ -40,3 +40,7 @@ class HotelModel(banco.Model):
         self.estrelas = estrelas
         self.diaria = diaria
         self.cidade = cidade
+
+    def delete_hotel(self):
+        banco.session.delete(self) #usa a função delete da session do SQLAlchemy
+        banco.session.commit()
