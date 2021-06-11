@@ -43,8 +43,8 @@ class Hotel(Resource): #trabalhando com um hotel único
     #declarando os argumentos como um atributo da classe Hotel
     argumentos = reqparse.RequestParser()
     #recebendo os valores pela chave, que serão usados para compor o novo objeto da classe Hotel
-    argumentos.add_argument('nome')  
-    argumentos.add_argument('estrelas')
+    argumentos.add_argument('nome', type=str, required=True, help="Esse campo 'nome' não pode ser deixado em branco")   #Exigindo esses atributos nos argumentos e passando o tipo de cada um
+    argumentos.add_argument('estrelas', type=float, required=True, help="O campo 'estrelas' não pode ser deixado em branco") #Exigindo esses atributos nos argumentos e passando o tipo de cada um
     argumentos.add_argument('diaria')
     argumentos.add_argument('cidade')
     
@@ -66,7 +66,12 @@ class Hotel(Resource): #trabalhando com um hotel único
         dados = Hotel.argumentos.parse_args() #cria uma lista com os argumentos passados
         #
         hotel = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
-        hotel.save_hotel() #utilizando a função criada em Hotel Models para salvar o hotel criado
+        
+        try:
+            hotel.save_hotel() #utilizando a função criada em Hotel Models para salvar o hotel criado
+        except:
+            return {'message': 'Aconteceu um erro interno tentando salvar esse registro de hotel.'}, 500 #Erro interno de servidor
+        
         return hotel.json() #retornando o hotel salvo em formato JSON
 
 
@@ -83,7 +88,11 @@ class Hotel(Resource): #trabalhando com um hotel único
             hotel_encontrado.save_hotel() #salva no banco o hotel atualizado
             return hotel_encontrado.json(), 200 #retorna o código 200 de sucesso OK
         hotel = HotelModel(hotel_id, **dados) #se não encontrar um hotel pelo id passado, cria uma nova instância
-        hotel.save_hotel()
+        
+        try:
+            hotel.save_hotel()
+        except:
+            return {'message':'Ocorreu um erro interno em nosso servidor ao tentar salvar esse registro'},500
         return hotel.json(), 201 #created
 
     def delete(self, hotel_id):
@@ -92,6 +101,9 @@ class Hotel(Resource): #trabalhando com um hotel único
         
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
-            hotel.delete_hotel()
+            try:
+                hotel.delete_hotel()
+            except:
+                return {"message":"Ocorreu um erro interno na hora de deletar esse registro pelo lado do servidor"}, 500
             return {'message':'Hotel Deleted!'} #mensagem de retorno
         return {'message':'Hotel not found!'}, 404
