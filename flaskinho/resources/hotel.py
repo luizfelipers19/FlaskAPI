@@ -48,11 +48,6 @@ class Hotel(Resource): #trabalhando com um hotel único
     argumentos.add_argument('cidade')
     
 
-    def findHotel(hotel_id):
-        for hotel in hoteis:
-            if hotel['hotel_id'] == hotel_id:
-                return hotel
-        return None
 
 
     def get(self, hotel_id):
@@ -62,15 +57,17 @@ class Hotel(Resource): #trabalhando com um hotel único
         return {"message":"Hotel not found!"}, 404 #status code de erro
 
     def post(self,hotel_id):
-        
+        #Se o hotel_id passado já existir no nosso banco, retornará uma mensagem de erro, avisando que não será salvo pois já existe
+        if HotelModel.find_hotel(hotel_id): #acessando o método de classe find_hotel do nosso HotelModel
+            return {"message": "Hotel id '{}' already exists" .format(hotel_id)}, 400
 
+        #se o hotel não existir, será criado um novo objeto com os atributos passados
         dados = Hotel.argumentos.parse_args() #cria uma lista com os argumentos passados
         #
-        hotel_objeto = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
-        novo_hotel = hotel_objeto.json() #conversão do nosso novo objeto para o formato json, e salvando em uma nova variável
-        #salvando o novo objeto json na nossa lista de hoteis
-        hoteis.append(novo_hotel)
-        return novo_hotel, 200
+        hotel = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
+        hotel.save_hotel() #utilizando a função criada em Hotel Models para salvar o hotel criado
+        return hotel.json() #retornando o hotel salvo em formato JSON
+
 
     def put(self,hotel_id):
 
