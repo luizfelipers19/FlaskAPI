@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from models.hotel import HotelModel
 
 hoteis = [
     {
@@ -26,6 +27,9 @@ hoteis = [
 
     },
 ]
+
+
+
 
 class Hoteis(Resource): ##lista de hoteis
     def get(self):
@@ -61,17 +65,18 @@ class Hotel(Resource): #trabalhando com um hotel único
         
 
         dados = Hotel.argumentos.parse_args() #cria uma lista com os argumentos passados
-        
-        #criação de um objeto que receberá os valores passados
-        novo_hotel = {'hotel_id': hotel_id, **dados}
-
+        #
+        hotel_objeto = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
+        novo_hotel = hotel_objeto.json() #conversão do nosso novo objeto para o formato json, e salvando em uma nova variável
+        #salvando o novo objeto json na nossa lista de hoteis
         hoteis.append(novo_hotel)
         return novo_hotel, 200
 
     def put(self,hotel_id):
 
         dados = Hotel.argumentos.parse_args()
-        novo_hotel = {'hotel_id': hotel_id, **dados}
+        hotel_objeto = HotelModel(hotel_id, **dados) #criando o hotel_objeto da mesma forma do metodo POST
+        novo_hotel = hotel_objeto.json()
 
         hotel = Hotel.findHotel(hotel_id)
         if hotel:
