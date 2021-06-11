@@ -73,15 +73,18 @@ class Hotel(Resource): #trabalhando com um hotel único
     def put(self,hotel_id):
 
         dados = Hotel.argumentos.parse_args()
-        hotel_objeto = HotelModel(hotel_id, **dados) #criando o hotel_objeto da mesma forma do metodo POST
-        novo_hotel = hotel_objeto.json()
+        #hotel = HotelModel(hotel_id, **dados) #criando o hotel_objeto da mesma forma do metodo POST
+      
+      
 
-        hotel = Hotel.findHotel(hotel_id)
-        if hotel:
-            hotel.update(novo_hotel)
-            return novo_hotel, 200
-        hoteis.append(novo_hotel)
-        return novo_hotel, 201 #created
+        hotel_encontrado = HotelModel.find_hotel(hotel_id)
+        if hotel_encontrado:
+            hotel_encontrado.update_hotel(**dados) #se o hotel for encontrado, é atualizado através dos key-word arguments
+            hotel_encontrado.save_hotel() #salva no banco o hotel atualizado
+            return hotel_encontrado.json(), 200 #retorna o código 200 de sucesso OK
+        hotel = HotelModel(hotel_id, **dados) #se não encontrar um hotel pelo id passado, cria uma nova instância
+        hotel.save_hotel()
+        return hotel.json(), 201 #created
 
     def delete(self, hotel_id):
         global hoteis #precisando declarar uma referência a nossa variável global hoteis
