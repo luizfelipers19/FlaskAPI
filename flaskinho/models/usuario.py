@@ -24,6 +24,13 @@ class UserModel(banco.Model):
             return user #retorna esse usuario
         return None #caso não exista, retorna None
 
+    @classmethod
+    def find_by_login(cls, login):
+        user = cls.query.filter_by(login=login).first() #realiza uma busca no banco por um registro com o mesmo login
+        if user:
+            return user
+        return None
+
     def save_user(self):
         banco.session.add(self) #adiciona ao banco
         banco.session.commit() #confirma a modificação
