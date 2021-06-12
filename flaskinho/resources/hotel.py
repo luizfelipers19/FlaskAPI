@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
+from flask_jwt_extended import jwt_required
 
 # hoteis = [
 #     {
@@ -57,6 +58,7 @@ class Hotel(Resource): #trabalhando com um hotel único
             return hotel.json() #retorna um objeto, que é transformado para o formato JSON
         return {"message":"Hotel not found!"}, 404 #status code de erro
 
+    @jwt_required()
     def post(self,hotel_id):
         #Se o hotel_id passado já existir no nosso banco, retornará uma mensagem de erro, avisando que não será salvo pois já existe
         if HotelModel.find_hotel(hotel_id): #acessando o método de classe find_hotel do nosso HotelModel
@@ -74,7 +76,7 @@ class Hotel(Resource): #trabalhando com um hotel único
         
         return hotel.json() #retornando o hotel salvo em formato JSON
 
-
+    @jwt_required()
     def put(self,hotel_id):
 
         dados = Hotel.argumentos.parse_args()
@@ -95,6 +97,7 @@ class Hotel(Resource): #trabalhando com um hotel único
             return {'message':'Ocorreu um erro interno em nosso servidor ao tentar salvar esse registro'},500
         return hotel.json(), 201 #created
 
+    @jwt_required()
     def delete(self, hotel_id):
         
         #hoteis = [hotel for hotel in hoteis if hotel['hotel_id'] != hotel_id] #list compreension que filtra pelos valores que são diferentes do hotel_id passado, deixando na lista apenas os que não são o id passado, e deletando o id passado por argumento

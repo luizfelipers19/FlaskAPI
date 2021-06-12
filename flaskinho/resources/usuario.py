@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.usuario import UserModel
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from werkzeug.security import safe_str_cmp
 
 atributos = reqparse.RequestParser() #
@@ -15,6 +15,7 @@ class Usuario(Resource):
             return user.json()#retorna esse usuário em formato json
         return {'message':'Usuário não encontrado'}, 404 #caso não exista, retorna uma msg de erro
 
+    @jwt_required()
     def delete(self, user_id):
         user = UserModel.find_user(user_id) #procura um usuário pelo user_id passado e salva o resultado na variável user
         if user: #se existir um user
