@@ -54,11 +54,21 @@ class Hoteis(Resource): ##lista de hoteis
         dados_validos = {chave: dados[chave] for chave in dados if dados['chave'] is not None} #usa dictionary comprehension para filtrar os dados (declarados acima) onde o valor de cada item (chave) não for nulo
         parametros = normalize_path_params(**dados_validos)
         
-        if parametros.get('cidade'): #consultando se existe o valor salvo no campo Cidade
+        if not parametros.get('cidade'): #consultando se existe o valor no campo Cidade não foi passado
             consulta = "SELECT * FROM hoteis \
-            WHERE (estrelas > ? and estrelas < ? \
-                 and diaria > ? and diaria < ? ) \
-                     LIMIT ? OFFSET ?"
+            WHERE (estrelas > ? and estrelas < ?) \
+            and (diaria > ? and diaria < ? ) \
+            LIMIT ? OFFSET ?"
+            tupla = tupla([parametros[chave] for chave in parametros])
+            resultado = cursor.execute(consulta, tupla )
+        else:
+            consulta = "SELECT * FROM hoteis \
+            WHERE (estrelas > ? and estrelas < ?) \
+            and (diaria > ? and diaria < ? ) \
+            and cidade = ? LIMIT ? OFFSET ?"
+            tupla = tupla([parametros[chave] for chave in parametros])
+            resultado = cursor.execute(consulta, tupla)
+            
 
         return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
         #dessa forma, todos serão buscados no banco de dados criado
