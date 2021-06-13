@@ -1,39 +1,22 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
 from flask_jwt_extended import jwt_required
+import sqlite3
 
-# hoteis = [
-#     {
-#     'hotel_id':'alpha',
-#     'nome': 'Alpha Hotel',
-#     'estrelas': 4.3,
-#     'diaria': 420.43,
-#     'cidade':'Rio de Janeiro'
+#path /hoteis?cidade=Rio de Janeiro  <= filtragem de hoteis por cidade
 
-#     },
-#     {
-#     'hotel_id':'bravo',
-#     'nome': 'Bravo Hotel',
-#     'estrelas': 3.3,
-#     'diaria': 220.99,
-#     'cidade':'Florianopolis'
-
-#     },
-#     {
-#     'hotel_id':'charlie',
-#     'nome': 'Charlie Hotel',
-#     'estrelas': 2.9,
-#     'diaria': 150.49,
-#     'cidade':'Monte Verde'
-
-#     },
-# ]
-
-
-
+#implementando a filtragem de hoteis e paginação
+path_params = reqparse.RequestParser()
+path_params.add_argument('cidade', type=str)
+path_params.add_argument('estrelas_min', type=float)
+path_params.add_argument('estrelas_max', type=float)
+path_params.add_argument('diaria_min', type=float)
+path_params.add_argument('diaria_max', type=float)
+path_params.add_argument('limit', type=float)
+path_params.add_argument('offset', type=float)
 
 class Hoteis(Resource): ##lista de hoteis
-    def get(self):
+    def get(self):  #realizar paginação e filtração
         return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
         #dessa forma, todos serão buscados no banco de dados criado
 
