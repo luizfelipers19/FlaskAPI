@@ -32,13 +32,13 @@ class Hoteis(Resource): ##lista de hoteis
         parametros = normalize_path_params(**dados_validos)
         
         if not parametros.get('cidade'): #consultando se existe o valor no campo Cidade não foi passado
-            consulta = consulta_sem_cidade #importando consulta que está no arquivo de filtros
+            #importando consulta que está no arquivo de filtros
             tupla = tuple([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, tupla)
+            resultado = cursor.execute(consulta_sem_cidade, tupla)
         else:
-            consulta = consulta_com_cidade #importando consulta que está no arquivo de filtros
+            #importando consulta que está no arquivo de filtros
             tupla = tuple([parametros[chave] for chave in parametros])
-            resultado = cursor.execute(consulta, tupla)
+            resultado = cursor.execute(consulta_com_cidade, tupla)
             
         hoteis = []
         for registro in resultado: #percorrendo o conteúdo da variável resultado (após o comando sql ter sido executado), e criando um dicionário para cada linha de registro contendo as variavéis (colunas)
@@ -47,7 +47,8 @@ class Hoteis(Resource): ##lista de hoteis
                 'nome':registro[1],
                 'estrelas':registro[2],
                 'diaria':registro[3],
-                'cidade':registro[4]
+                'cidade':registro[4],
+                'site_id': registro[5]
             })
 
         return {'hoteis': hoteis} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
@@ -64,6 +65,7 @@ class Hotel(Resource): #trabalhando com um hotel único
     argumentos.add_argument('estrelas', type=float, required=True, help="O campo 'estrelas' não pode ser deixado em branco") #Exigindo esses atributos nos argumentos e passando o tipo de cada um
     argumentos.add_argument('diaria')
     argumentos.add_argument('cidade')
+    argumentos.add_argument('site_id', type=int, required=True, help="Todo hotel precisa estar relacionado a um site")
     
 
 
