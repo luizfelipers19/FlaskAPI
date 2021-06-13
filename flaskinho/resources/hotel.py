@@ -3,6 +3,35 @@ from models.hotel import HotelModel
 from flask_jwt_extended import jwt_required
 import sqlite3
 
+
+
+def normalize_path_params(cidade=None,
+                            estrelas_min=0,
+                            estrelas_max=5,
+                            diaria_min=0,
+                            diaria_max=100000,
+                            limit = 50,
+                            offset = 0, **dados):
+    if cidade:
+        return {
+            'estrelas_min': estrelas_min,
+            'estrelas_max': estrelas_max,
+            'diaria_min': diaria_min,
+            'diaria_max': diaria_max,
+            'cidade': cidade,
+            'limit':limit,
+            'offset':offset
+        }
+    return {
+        'estrelas_min': estrelas_min,
+        'estrelas_max': estrelas_max,
+        'diaria_min': diaria_min,
+        'diaria_max': diaria_max,
+        'limit':limit,
+        'offset':offset
+    }
+
+
 #path /hoteis?cidade=Rio de Janeiro  <= filtragem de hoteis por cidade
 
 #implementando a filtragem de hoteis e paginação
@@ -17,6 +46,10 @@ path_params.add_argument('offset', type=float)
 
 class Hoteis(Resource): ##lista de hoteis
     def get(self):  #realizar paginação e filtração
+        
+        dados = path_params.parse_args()
+        dados_validos = {chave: dados[chave] for chave in dados if dados['chave'] is not None} #usa dictionary comprehension para filtrar os dados (declarados acima) onde o valor de cada item (chave) não for nulo
+
         return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
         #dessa forma, todos serão buscados no banco de dados criado
 
