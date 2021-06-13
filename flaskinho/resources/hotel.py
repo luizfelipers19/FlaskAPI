@@ -47,8 +47,18 @@ path_params.add_argument('offset', type=float)
 class Hoteis(Resource): ##lista de hoteis
     def get(self):  #realizar paginação e filtração
         
+        connection = sqlite3.connect('banco.db') #criando uma nova conexão ao nosso banco existente
+        cursor = connection.cursor()#criação do cursor
+
         dados = path_params.parse_args()
         dados_validos = {chave: dados[chave] for chave in dados if dados['chave'] is not None} #usa dictionary comprehension para filtrar os dados (declarados acima) onde o valor de cada item (chave) não for nulo
+        parametros = normalize_path_params(**dados_validos)
+        
+        if parametros.get('cidade'): #consultando se existe o valor salvo no campo Cidade
+            consulta = "SELECT * FROM hoteis \
+            WHERE (estrelas > ? and estrelas < ? \
+                 and diaria > ? and diaria < ? ) \
+                     LIMIT ? OFFSET ?"
 
         return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
         #dessa forma, todos serão buscados no banco de dados criado
