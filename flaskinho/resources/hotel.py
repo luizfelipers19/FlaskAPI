@@ -69,8 +69,17 @@ class Hoteis(Resource): ##lista de hoteis
             tupla = tupla([parametros[chave] for chave in parametros])
             resultado = cursor.execute(consulta, tupla)
             
+        hoteis = []
+        for registro in resultado: #percorrendo o conteúdo da variável resultado (após o comando sql ter sido executado), e criando um dicionário para cada linha de registro contendo as variavéis (colunas)
+            hoteis.append({
+                'hotel_id':registro[0],
+                'nome':registro[1],
+                'estrelas':registro[2],
+                'diaria':registro[3],
+                'cidade':registro[4]
+            })
 
-        return {'hoteis': [hotel.json() for hotel in HotelModel.query.all()]} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
+        return {'hoteis': hoteis} #retorna um dicionário com uma lista de todos os hoteis formatados em Json, a partir do nosso HotelModel. 
         #dessa forma, todos serão buscados no banco de dados criado
 
 
