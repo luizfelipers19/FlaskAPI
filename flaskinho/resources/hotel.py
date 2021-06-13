@@ -1,35 +1,12 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
+from resources.filtros import normalize_path_params, consulta_sem_cidade, consulta_com_cidade
 from flask_jwt_extended import jwt_required
 import sqlite3
 
 
 
-def normalize_path_params(cidade=None,
-                            estrelas_min=0,
-                            estrelas_max=5,
-                            diaria_min=0,
-                            diaria_max=100000,
-                            limit = 50,
-                            offset = 0, **dados):
-    if cidade:
-        return {
-            'estrelas_min': estrelas_min,
-            'estrelas_max': estrelas_max,
-            'diaria_min': diaria_min,
-            'diaria_max': diaria_max,
-            'cidade': cidade,
-            'limit':limit,
-            'offset':offset
-        }
-    return {
-        'estrelas_min': estrelas_min,
-        'estrelas_max': estrelas_max,
-        'diaria_min': diaria_min,
-        'diaria_max': diaria_max,
-        'limit':limit,
-        'offset':offset
-    }
+
 
 
 #path /hoteis?cidade=Rio de Janeiro  <= filtragem de hoteis por cidade
@@ -55,17 +32,11 @@ class Hoteis(Resource): ##lista de hoteis
         parametros = normalize_path_params(**dados_validos)
         
         if not parametros.get('cidade'): #consultando se existe o valor no campo Cidade não foi passado
-            consulta = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ? ) \
-            LIMIT ? OFFSET ?"
+            consulta = consulta_sem_cidade #importando consulta que está no arquivo de filtros
             tupla = tuple([parametros[chave] for chave in parametros])
             resultado = cursor.execute(consulta, tupla)
         else:
-            consulta = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ? ) \
-            and cidade = ? LIMIT ? OFFSET ?"
+            consulta = consulta_com_cidade #importando consulta que está no arquivo de filtros
             tupla = tuple([parametros[chave] for chave in parametros])
             resultado = cursor.execute(consulta, tupla)
             
