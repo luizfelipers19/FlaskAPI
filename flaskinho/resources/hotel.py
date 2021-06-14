@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
+from models.site import SiteModel
 from resources.filtros import normalize_path_params, consulta_sem_cidade, consulta_com_cidade
 from flask_jwt_extended import jwt_required
 import sqlite3
@@ -87,7 +88,7 @@ class Hotel(Resource): #trabalhando com um hotel único
         #
         hotel = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
         
-        if not SiteModel.find_by_id(dados.get('site_id')):
+        if not SiteModel.find_site_by_id(dados.get('site_id')):
             return {'message':'O hotel precisa estar associado a um site_id válido!'}, 400
 
         try:
