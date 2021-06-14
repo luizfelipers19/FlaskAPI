@@ -27,6 +27,13 @@ class SiteModel(banco.Model):
         if site:
             return site
         return None
+
+    @classmethod
+    def find_site_by_id(cls, site_id):
+        site = cls.query.filter_by(site_id=site_id).first()
+        if site:
+            return site
+        return None
     
     def save_site(self):
         banco.session.add(self) #usando o session.add() do sqlalchemy para adicionar o registro no banco
@@ -35,5 +42,8 @@ class SiteModel(banco.Model):
     
 
     def delete_site(self):
+        #deletando os hoteis associados aos sites
+        [hotel.delete_hotel() for hotel in self.hoteis]
+        #deletando os sites
         banco.session.delete(self) #usa a função delete da session do SQLAlchemy
         banco.session.commit()

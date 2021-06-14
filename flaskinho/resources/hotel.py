@@ -87,6 +87,9 @@ class Hotel(Resource): #trabalhando com um hotel único
         #
         hotel = HotelModel(hotel_id, **dados) #criando um novo objeto da classe HotelModel que será construído a partir da nossa lista dados que recebe os argumentos passados
         
+        if not SiteModel.find_by_id(dados.get('site_id')):
+            return {'message':'O hotel precisa estar associado a um site_id válido!'}, 400
+
         try:
             hotel.save_hotel() #utilizando a função criada em Hotel Models para salvar o hotel criado
         except:
